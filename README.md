@@ -1,158 +1,173 @@
-# Logística Predictiva: Optimizando la Entrega en E-commerce para Proteger la Reputación de Marca
+# On‑Time AI: Modelos predictivos para reducir retrasos logísticos
 
 ## Descripción del proyecto
 
-Una empresa internacional de comercio electrónico especializada en productos tecnológicos presenta una tasa de retraso en sus envíos del **59.7%**. Este proyecto aplica técnicas de Machine Learning para predecir si un paquete llegará tarde antes de que salga del almacén, permitiendo al equipo de Atención al Cliente actuar de forma proactiva: enviar un cupón de descuento preventivo antes de que el cliente reclame.
+Una empresa internacional de comercio electrónico especializada en productos tecnológicos presenta una tasa de retraso en sus envíos del **59.7%**. Este proyecto aplica técnicas de Machine Learning para predecir si un paquete llegará tarde **antes de que salga del almacén**, permitiendo al equipo de Atención al Cliente actuar de forma proactiva.
+
+### Estrategia de negocio
+
+Enviar un cupón de descuento **preventivo** al cliente antes de que se produzca el retraso, transformando una experiencia negativa en una oportunidad de retención.
+
+### Enfoque dual
 
 Se desarrollan dos líneas de análisis complementarias:
 
-- **Modelo supervisado** (clasificación binaria): predice si un envío concreto llegará tarde
-- **Modelo no supervisado** (clustering): identifica perfiles de envío con distinto nivel de riesgo estructural
+- **Modelo supervisado**: Clasificación binaria que predice si un envío específico llegará tarde
+- **Modelo no supervisado**: Clustering K-means que identifica perfiles de envío con distinto nivel de riesgo estructural
 
 ---
 
 ## Objetivos
 
-- Construir un modelo predictivo que detecte retrasos antes de que ocurran
-- Identificar las variables más determinantes del retraso
-- Segmentar los envíos en perfiles de riesgo accionables para el negocio
-- Demostrar el impacto en negocio con métricas concretas y traducibles a decisiones operativas
+- Construir un modelo predictivo capaz de detectar retrasos antes de que ocurran
+- Identificar las variables más determinantes del retraso y su impacto
+- Segmentar los envíos en perfiles de riesgo accionables para operaciones
+- Cuantificar el impacto en negocio con métricas traducibles a decisiones operativas
+- Generar modelos escalables listos para producción
 
 ---
 
 ## Estructura del repositorio
 
 ```
-ML_SHIPPING/
-└── src/
-    ├── data/
-    │   ├── shipping_data.csv        ← dataset original
-    │   ├── train.csv                ← 80% para entrenamiento (8.799 muestras)
-    │   └── test.csv                 ← 20% para evaluación (2.200 muestras)
-    ├── model/
-    │   ├── production/
-    │   │   └── random_forest_final.pkl  ← modelo elegido para producción
-    │   ├── arbol_decision.pkl
-    │   ├── knn.pkl
-    │   ├── random_forest.pkl
-    │   ├── regresion_logistica.pkl
-    │   └── xgboost.pkl
-    ├── notebooks/
-    │   ├── 01_exploración_y_eda.ipynb
-    │   ├── 02_preprocesamiento_y_modelado.ipynb
-    │   └── 03_clustering_kmeans.ipynb
-    ├── resources/
-    │   └── img/                     ← gráficos generados en los notebooks
-    ├── utils/
-    │   ├── __init__.py
-    │   ├── metricas.py              ← función evaluar_modelo()
-    │   └── preprocesamiento.py      ← función cargar_y_limpiar()
-    ├── memoria.ipynb                ← resumen ejecutivo del proyecto
-    └── README.md
+ ML_shipping/
+├── README.md                        ← Este archivo
+├── src/
+│   ├── data/
+│   │   ├── shipping_data.csv        ← Dataset original (10,999 muestras)
+│   │   ├── train.csv                ← 80% entrenamiento (8,799 muestras)
+│   │   └── test.csv                 ← 20% evaluación (2,200 muestras)
+│   │
+│   ├── model/
+│   │   ├── production/
+│   │   │   └── xgboost_final.pkl  ← Modelo elegido para producción
+│   │   ├── arbol_decision.pkl
+│   │   ├── knn.pkl
+│   │   ├── random_forest.pkl
+│   │   ├── regresion_logistica.pkl
+│   │   └── xgboost.pkl
+│   │
+│   ├── notebooks/
+│   │   ├── 01_exploración_y_eda.ipynb           ← Análisis exploratorio: "¿qué tenemos?"
+│   │   ├── 02_preprocesamiento_y_modelado.ipynb ← Entrenamiento de modelos: "¿podemos predecir retrasos y cómo?"
+│   │   └── 03_clustering_kmeans.ipynb           ← Análisis de segmentación: "¿qué grupos o patrones esconde el dataset?"
+│   │
+│   ├── resources/
+│   │   └── img/                     ← Visualizaciones y gráficos
+│   │
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── metricas.py              ← función evaluar_modelo()
+│   │   └── preprocesamiento.py      ← función cargar_y_limpiar()
+│   │
+│   └── memoria.ipynb                ← Resumen ejecutivo del proyecto
 ```
 
 ---
 
 ## Dataset
 
-| Campo                   | Detalle                                                                                           |
-| ----------------------- | ------------------------------------------------------------------------------------------------- |
-| **Origen**        | [Kaggle — E-Commerce Shipping Dataset](https://www.kaggle.com/datasets/prachi13/customer-analytics) |
-| **Observaciones** | 10.999 registros                                                                                  |
-| **Variables**     | 12 (7 numéricas, 4 categóricas, 1 target)                                                       |
-| **Target**        | `Reached.on.Time_Y.N` (1=retraso, 0=a tiempo)                                                   |
-| **Valores nulos** | Ninguno                                                                                           |
+**Tamaño**: 10,999 muestras por múltiples variables
+**Clases**: Binaria (Retraso: Sí/No)
+**Desbalance**: Clase positiva (retrasos): 59.7%
+
+### Variables principales
+
+- `Product_importance`: Importancia del producto (low, medium, high)
+- `Route_type`: Tipo de ruta de envío
+- `Location_type`: Tipo de localización (Urbana/Rural)
+- Distancia, peso, modo de transporte, entre otras
+
+## Preprocesamiento
+
+- **Eliminación**: columna `ID` (identificador sin valor predictivo)
+- **Ordinal Encoding**: `Product_importance` → low=1, medium=2, high=3 (preserva jerarquía)
+- **One-Hot Encoding**: `Warehouse_block`, `Mode_of_Shipment`, `Gender` con `drop_first=True` (evita multicolinealidad)
+- **Conversión de tipos**: columnas booleanas a enteros para compatibilidad con sklearn
+- **Escalado**: StandardScaler en Pipeline para Regresión Logística y KNN
+- **Split estratificado**: 80% train / 20% test con `stratify=y` y `random_state=42`
 
 ---
 
-## Metodología
+## Hallazgos del EDA
 
-### Notebooks
+El análisis exploratorio reveló tres patrones clave confirmados posteriormente por los modelos:
 
-| Notebook                                 | Contenido                                                                              |
-| ---------------------------------------- | -------------------------------------------------------------------------------------- |
-| `01_exploración_y_eda.ipynb`          | Carga de datos, análisis estadístico, visualizaciones, hallazgos clave               |
-| `02_preprocesamiento_y_modelado.ipynb` | Limpieza, encoding, train/test split, 5 modelos supervisados, evaluación y selección |
-| `03_clustering_kmeans.ipynb`           | K-Means, elección del K óptimo, análisis de perfiles de riesgo                      |
-
-### Modelos entrenados
-
-| Modelo                    | Familia               | Recall          | ROC-AUC         |
-| ------------------------- | --------------------- | --------------- | --------------- |
-| Regresión Logística     | Lineal                | 67.4%           | 0.717           |
-| Árbol de Decisión       | Reglas interpretables | 47.8%           | 0.736           |
-| **Random Forest**  | Ensamble bagging      | **61.9%** | **0.735** |
-| XGBoost                   | Ensamble boosting     | 47.0%           | 0.748           |
-| KNN                       | Similitud             | 65.4%           | 0.691           |
+- **Efecto del descuento**: a partir del 15% de descuento, ningún envío llega a tiempo. El umbral crítico está entre el 10% y el 15%. Las campañas promocionales agresivas colapsan la capacidad logística del almacén de forma sistemática.
+- **Segmentación por peso**: los paquetes ligeros (1-2 kg) tienen una alta tasa de retraso; los pesados (4-6 kg) un comportamiento más estable. Esta segmentación natural justifica el análisis de clustering.
+- **Modo de envío**: el barco (Ship) concentra el mayor volumen de incidencias, tanto en términos absolutos como en proporción de retrasos.
 
 ---
 
-## Modelo elegido: Random Forest
+## Resultados clave
 
-El **Random Forest** es el modelo con mejor equilibrio entre todas las métricas para nuestro objetivo de negocio.
+### Modelo seleccionado: XGBoost
 
-| Métrica         | Resultado       |
-| ---------------- | --------------- |
-| Accuracy         | 65.9%           |
-| Precision        | 76.4%           |
-| **Recall** | **61.9%** |
-| F1-Score         | 68.4%           |
-| ROC-AUC          | 0.735           |
+El modelo de **XGBoost** fue elegido para producción por su **excepcional Recall (91.6%)** — detecta 9 de cada 10 retrasos antes de que ocurran:
 
-### Variables más importantes
+- **Accuracy**: 62.6%
+- **Precision**: 62.8% — de cada 10 alertas, ~6-7 son retrasos reales
+- **Recall**: **91.6%** ← **Métrica clave** para minimizar falsos negativos
+- **F1-Score**: 74.5% — el más alto de todos los modelos
+- **ROC-AUC**: 0.746 — mejor capacidad discriminativa
 
-1. `Weight_in_gms` (28%) — el peso es el factor más determinante
-2. `Discount_offered` (23%) — confirmado por el EDA y el clustering
-3. `Cost_of_the_Product` (17%) — productos caros implican mayor riesgo
+#### El ajuste clave
 
----
+El parámetro `scale_pos_weight` debe ser `positivos/negativos` (≈1.48) y **NO** `negativos/positivos` (≈0.68). Con el ratio incorrecto el Recall era del 47%, con el correcto sube al **91.6%**. Un solo parámetro, 44 puntos de diferencia.
 
-## Hallazgo clave
+#### Variables más importantes
 
-El descuento alto como factor crítico aparece confirmado por **tres metodologías independientes**:
+1. **Weight_in_gms** (≈28%) — el peso es el factor más determinante
+2. **Discount_offered** (≈23%) — confirmado por el EDA
+3. **Cost_of_the_Product** (≈17%) — productos caros = mayor riesgo
 
-1. **EDA**: con descuento > 10.5%, el 100% de los envíos llegan tarde
-2. **Árbol de Decisión**: el descuento es la primera pregunta del árbol (gini=0 en la rama de descuento alto)
-3. **K-Means**: sin ver ninguna etiqueta de retraso, agrupa espontáneamente los envíos con descuento alto en un cluster con tasa de retraso del 99.5%
+#### Matriz de confusión del modelo final (conjunto test)
 
----
+|                          | Predicho: A tiempo | Predicho: Retraso |
+| ------------------------ | ------------------ | ----------------- |
+| **Real: A tiempo** | 174 (TN)           | 713 (FP)          |
+| **Real: Retraso**  | 110 (FN)           | 1.203 (TP)        |
 
-## Impacto en negocio
+## Resultados del clustering K-Means
 
-Sobre los 2.200 envíos del conjunto de test:
+Se aplicó K-Means sobre las 7 variables numéricas del dataset. El número óptimo de clusters (K=3) fue determinado mediante el Método del Codo, el Índice de Silhouette (score: 0.2386) y el diagrama de Silhouette comparativo.
 
-| Resultado                                       | Número       |
-| ----------------------------------------------- | ------------- |
-| Retrasos detectados (cupón preventivo enviado) | **813** |
-| Retrasos no detectados                          | 500           |
-| Falsas alarmas (cupones innecesarios)           | 251           |
+| Cluster   | Tamaño       | Tasa de retraso | Perfil dominante                          |
+| --------- | ------------- | --------------- | ----------------------------------------- |
+| Cluster 0 | 2.294 (20.9%) | **99.5%** | Descuento alto (media 40.1%)              |
+| Cluster 1 | 6.097 (55.4%) | 47.9%           | Paquete pesado (media 4.801g)             |
+| Cluster 2 | 2.608 (23.7%) | 52.3%           | Cliente fidelizado (compras previas: 5.1) |
 
-El modelo detecta **6 de cada 10 retrasos** antes de que ocurran. Un cupón enviado de más es un coste asumible. Un cliente que reclama sin atención previa es un daño de reputación evitable.
-
----
-
-## Futuros pasos
-
-- GridSearchCV para optimizar hiperparámetros del Random Forest
-- Ajustar el umbral de decisión de XGBoost (50% → 25-30%) y comparar Recall
-- Añadir la variable Cluster como feature al modelo supervisado
-- Explorar DBSCAN como alternativa al K-Means
-- Enriquecer el dataset con datos de tráfico, clima o temporada
-- Demo en Streamlit para el equipo de Atención al Cliente
+El Cluster 0 es el hallazgo más impactante: el K-Means agrupa espontáneamente el 20.9% de los envíos en un perfil con una tasa de retraso del 99.5%, definido exclusivamente por el descuento alto. Confirma desde una metodología independiente el hallazgo central del EDA.
 
 ---
 
-## Requisitos
+## Impacto de negocio
 
-```bash
-pandas
-numpy
-matplotlib
-seaborn
-scikit-learn
-xgboost
-statsmodels
-```
+- **De cada 10 retrasos reales, detectamos 9** antes de que ocurran
+- **~1,203 clientes** reciben un cupón preventivo vs. **~110 que se escapan**
+- Un cupón de más es un coste asumible
+- Un cliente que reclama sin atención es un daño de reputación
+- Transformación de experiencia negativa en oportunidad de retención
+
+---
+
+## Demo interactiva — Streamlit
+
+La aplicación incluye tres pestañas:
+
+- **Predicción individual**: introduce los datos de un envío y obtén la predicción con probabilidad de retraso y recomendación de acción
+- **Carga masiva**: sube un CSV con varios envíos y descarga el resultado enriquecido con predicciones para todos
+- **Análisis**: resumen visual del proyecto con los hallazgos del EDA, comparativa de modelos y resultados del clustering
+
+---
+
+## Notas Importantes
+
+- El dataset está balanceado en la split train/test (80/20)
+- Se utilizó **Ordinal Encoding** para `Product_importance` (preserva jerarquía: low < medium < high)
+- El **Recall es la métrica clave** para minimizar falsos negativos (envíos que no detectamos como retrasados)
+- Todos los modelos están serializados en `.pkl` para reutilización
 
 ---
 
@@ -161,13 +176,4 @@ statsmodels
 1. Clona el repositorio
 2. Instala las dependencias: `pip install -r requirements.txt`
 3. Ejecuta los notebooks en orden desde `src/notebooks/`
-4. El modelo final está disponible en `src/model/production/random_forest_final.pkl`
-
-```python
-import pickle
-
-with open('src/model/production/random_forest_final.pkl', 'rb') as f:
-    modelo = pickle.load(f)
-
-prediccion = modelo.predict([[...]])
-```
+4. El modelo final está disponible en `src/model/production/xgboost_final.pkl`
