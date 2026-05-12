@@ -183,7 +183,8 @@ def cargar_modelo():
         "src/model/production/xgboost_final.pkl",
         "model/production/xgboost_final.pkl",
         "../model/production/xgboost_final.pkl",
-        "xgboost_final.pkl"
+        "xgboost_final.pkl",
+        "/mount/src/ml_shipping/src/model/production/xgboost_final.pkl",
     ]
     for ruta in rutas:
         if os.path.exists(ruta):
