@@ -154,6 +154,8 @@ El Cluster 0 es el hallazgo más impactante: el K-Means agrupa espontáneamente 
 
 ## Demo interactiva — Streamlit
 
+🔗 **[**Acceder a la app**](**https://mlshipping-ontimeai.streamlit.app/**)**
+
 La aplicación incluye tres pestañas:
 
 - **Predicción individual**: introduce los datos de un envío y obtén la predicción con probabilidad de retraso y recomendación de acción

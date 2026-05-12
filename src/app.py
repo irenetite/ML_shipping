@@ -456,7 +456,7 @@ with tab3:
     # ── EDA ─────────────────────────────────────────────────────────────────
     st.markdown('<div class="section-title">Análisis exploratorio</div>', unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 1.8])
     with col1:
         st.markdown("**Distribución del target**")
         st.image(f"{IMG}/20_distribución_de_entregas.png", use_container_width=True)
