@@ -203,6 +203,9 @@ FEATURES = [
     'Mode_of_Shipment_Ship', 'Gender_M'
 ]
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+IMG = os.path.join(BASE_DIR, "resources/img")
+
 def preparar_input(datos):
     """Convierte los datos del formulario en el vector de features."""
     fila = {f: 0 for f in FEATURES}
@@ -438,8 +441,6 @@ with tab2:
 # TAB 3 — ANÁLISIS
 # ═══════════════════════════════════════════════════════════════════════════════
 with tab3:
-
-    IMG = "resources/img"
 
     # ── Introducción ────────────────────────────────────────────────────────
     st.markdown('<div class="section-title">El problema</div>', unsafe_allow_html=True)
