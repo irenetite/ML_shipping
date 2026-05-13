@@ -73,10 +73,10 @@ Se desarrollan dos líneas de análisis complementarias:
 
 ### Variables principales
 
-- `Product_importance`: Importancia del producto (low, medium, high)
-- `Route_type`: Tipo de ruta de envío
-- `Location_type`: Tipo de localización (Urbana/Rural)
-- Distancia, peso, modo de transporte, entre otras
+- `Discount_offered`: Descuento aplicado al producto (%)
+- `Weight_in_gms`: Peso del paquete en gramos
+- `Mode_of_Shipment`: Modo de transporte (Ship, Flight, Road)
+- `Warehouse_block`: Bloque del almacén de origen (A, B, C, D, F)
 
 ## Preprocesamiento
 
@@ -103,17 +103,19 @@ El análisis exploratorio reveló tres patrones clave confirmados posteriormente
 
 ### Modelo seleccionado: XGBoost
 
-El modelo de **XGBoost** fue elegido para producción por su **excepcional Recall (91.6%)** — detecta 9 de cada 10 retrasos antes de que ocurran:
+El modelo de **XGBoost** fue elegido para producción por su excepcional **Recall (98%)** — detecta 98 de cada 100 retrasos antes de que ocurran, optimizado mediante **GridSearchCV**:
 
-- **Accuracy**: 62.6%
-- **Precision**: 62.8% — de cada 10 alertas, ~6-7 son retrasos reales
-- **Recall**: **91.6%** ← **Métrica clave** para minimizar falsos negativos
-- **F1-Score**: 74.5% — el más alto de todos los modelos
-- **ROC-AUC**: 0.746 — mejor capacidad discriminativa
+- **Accuracy**: 59.8%
+- **Precision**: 60% — de cada 10 alertas, 6 son retrasos reales
+- **Recall**: **98%** ← **Métrica clave** para minimizar falsos negativos
+- **F1-Score**: 74.4% — el más alto de todos los modelos
+- **ROC-AUC**: 0.756 — mejor capacidad discriminativa
 
-#### El ajuste clave
+#### Los dos ajustes clave
 
-El parámetro `scale_pos_weight` debe ser `positivos/negativos` (≈1.48) y **NO** `negativos/positivos` (≈0.68). Con el ratio incorrecto el Recall era del 47%, con el correcto sube al **91.6%**. Un solo parámetro, 44 puntos de diferencia.
+**Ajuste 1 — scale_pos_weight**: debe ser `positivos/negativos` (≈1.48) y **NO** `negativos/positivos` (≈0.68). Con el ratio incorrecto el Recall era del 47%, con el correcto sube al **91.6%**. Un solo parámetro, 44 puntos de diferencia.
+
+**Ajuste 2 — learning_rate**: optimizado mediante GridSearchCV explorando 8 combinaciones con CV=5. El valor óptimo es **0.05** frente al 0.1 inicial. El Recall sube del 91.6% al **98.0%**. Otro parámetro, 6 puntos más de Recall.
 
 #### Variables más importantes
 
@@ -125,8 +127,8 @@ El parámetro `scale_pos_weight` debe ser `positivos/negativos` (≈1.48) y **NO
 
 |                          | Predicho: A tiempo | Predicho: Retraso |
 | ------------------------ | ------------------ | ----------------- |
-| **Real: A tiempo** | 174 (TN)           | 713 (FP)          |
-| **Real: Retraso**  | 110 (FN)           | 1.203 (TP)        |
+| **Real: A tiempo** | 28 (TN)            | 859 (FP)          |
+| **Real: Retraso**  | 26 (FN)            | 1.287 (TP)       |
 
 ## Resultados del clustering K-Means
 
@@ -144,8 +146,8 @@ El Cluster 0 es el hallazgo más impactante: el K-Means agrupa espontáneamente 
 
 ## Impacto de negocio
 
-- **De cada 10 retrasos reales, detectamos 9** antes de que ocurran
-- **~1,203 clientes** reciben un cupón preventivo vs. **~110 que se escapan**
+- **De cada 100 retrasos reales, detectamos 98** antes de que ocurran
+- **1.287 clientes** reciben un cupón preventivo vs. **26 que se escapan**
 - Un cupón de más es un coste asumible
 - Un cliente que reclama sin atención es un daño de reputación
 - Transformación de experiencia negativa en oportunidad de retención
