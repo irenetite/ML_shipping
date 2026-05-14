@@ -29,16 +29,17 @@ Se desarrollan dos líneas de análisis complementarias:
 
 ## Estructura del repositorio
 
+ML_shipping/
 ├── README.md                        ← Este archivo
 ├── src/
 │   ├── data/
-│   │   ├── shipping_data.csv        ← Dataset original (10,999 muestras)
-│   │   ├── train.csv                ← 80% entrenamiento (8,799 muestras)
-│   │   └── test.csv                 ← 20% evaluación (2,200 muestras)
+│   │   ├── shipping_data.csv        ← Dataset original (10.999 muestras)
+│   │   ├── train.csv                ← 80% entrenamiento (8.799 muestras)
+│   │   └── test.csv                 ← 20% evaluación (2.200 muestras)
 │   │
 │   ├── model/
 │   │   ├── production/
-│   │   │   └── xgboost_final.pkl  ← Modelo elegido para producción
+│   │   │   └── xgboost_final.pkl    ← Modelo elegido para producción
 │   │   ├── arbol_decision.pkl
 │   │   ├── knn.pkl
 │   │   ├── random_forest.pkl
@@ -59,12 +60,13 @@ Se desarrollan dos líneas de análisis complementarias:
 │   │
 │   ├── utils/
 │   │   ├── __init__.py
-│   │   ├── metricas.py              ← función evaluar_modelo()
-│   │   └── preprocesamiento.py      ← función cargar_y_limpiar()
+│   │   ├── metricas.py              ← Función evaluar_modelo()
+│   │   └── preprocesamiento.py      ← Función cargar_y_limpiar()
 │   │
+│   ├── app.py                       ← Aplicación Streamlit
+│   ├── .streamlit/
+│   │   └── config.toml              ← Configuración de tema de la app
 │   └── memoria.ipynb                ← Resumen ejecutivo del proyecto
-
----
 
 ## Dataset
 
