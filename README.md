@@ -29,8 +29,6 @@ Se desarrollan dos líneas de análisis complementarias:
 
 ## Estructura del repositorio
 
-```
- ML_shipping/
 ├── README.md                        ← Este archivo
 ├── src/
 │   ├── data/
@@ -52,6 +50,10 @@ Se desarrollan dos líneas de análisis complementarias:
 │   │   ├── 02_preprocesamiento_y_modelado.ipynb ← Entrenamiento de modelos: "¿podemos predecir retrasos y cómo?"
 │   │   └── 03_clustering_kmeans.ipynb           ← Análisis de segmentación: "¿qué grupos o patrones esconde el dataset?"
 │   │
+│   ├── presentacion/
+│   │   ├── on_time_ai.pdf
+│   │   └── on_time_ai.pptx
+│   │
 │   ├── resources/
 │   │   └── img/                     ← Visualizaciones y gráficos
 │   │
@@ -61,7 +63,6 @@ Se desarrollan dos líneas de análisis complementarias:
 │   │   └── preprocesamiento.py      ← función cargar_y_limpiar()
 │   │
 │   └── memoria.ipynb                ← Resumen ejecutivo del proyecto
-```
 
 ---
 
