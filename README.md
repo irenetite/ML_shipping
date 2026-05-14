@@ -28,7 +28,7 @@ Se desarrollan dos líneas de análisis complementarias:
 ---
 
 ## Estructura del repositorio
-
+```
 ML_shipping/
 ├── README.md                        ← Este archivo
 ├── src/
@@ -67,7 +67,7 @@ ML_shipping/
 │   ├── .streamlit/
 │   │   └── config.toml              ← Configuración de tema de la app
 │   └── memoria.ipynb                ← Resumen ejecutivo del proyecto
-
+```
 ## Dataset
 
 **Tamaño**: 10,999 muestras por múltiples variables
